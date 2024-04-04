@@ -38,6 +38,7 @@ class Data(db.Model):
     _id = db.Column("id", db.Integer, primary_key=True)
     datatype = db.Column(db.String(50), nullable=False)
     filepath = db.Column(db.String(500), nullable=False)
+    added_on = db.Column(db.DateTime, nullable=False, default=db.func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
@@ -48,7 +49,7 @@ class Message(db.Model):
     _id = db.Column("id", db.Integer, primary_key=True)
     is_user = db.Column(db.Boolean, nullable=False)
     content = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False, default=db.func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):

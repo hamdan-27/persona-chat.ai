@@ -1,9 +1,9 @@
 from flask import request, session, render_template, send_from_directory, redirect, url_for, flash
 from flask_login import LoginManager, login_user, login_required, logout_user
 from models import User, Persona, Data, Message
+from config import base_dir, app, db, flashes
 from wtforms import FileField, SubmitField
 from werkzeug.utils import secure_filename
-from config import app, db, flashes
 from flask_wtf import FlaskForm
 import os
 
@@ -32,7 +32,9 @@ def load_user(user_id):
 @app.route('/test', methods=['GET', 'POST'])
 def test():
     # Test code here
-    return render_template('admin.html')
+    form = UploadFileForm()
+    return render_template('test.html', form=form)
+    # return render_template('admin.html')
 
 
 @app.route('/')
@@ -96,7 +98,7 @@ def logout():
 @login_required
 def profile():
     if request.method == 'POST':
-        user = User.query.get(session['user_id'])
+        user = User.query.get(session['_user_id'])
         if user:
             if 'update-profile' in request.form:
                 new_name = request.form.get('fullname')
@@ -116,31 +118,50 @@ def profile():
         else:
             flash("Error: User not found", category=flashes.get('error'))
 
-    return render_template('profile.html', 
-        flashes=flashes, 
-        fullname=session['name'], 
-        email=session['email']
-    )
+    return render_template('profile.html',
+                           flashes=flashes,
+                           fullname=session['name'],
+                           email=session['email']
+                           )
 
 
 @app.route('/data', methods=['GET', 'POST'])
 @login_required
 def data():
+    files_list = Data.query.filter_by(user_id=session['_user_id']).all()
+
     form = UploadFileForm()
-    if form.validate_on_submit():
-        file = form.file.data
-        if file and allowed_file(file.filename):
-            file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                      app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
-            data = Data(
-                datatype=file.filename.rsplit('.', 1)[1].lower(),
-                filepath='/static/uploads/' + secure_filename(file.filename),
-                user_id=session['_user_id']
-            )
-            db.session.add(data)
-            db.session.commit()
-            flash('File uploaded successfully', category=flashes.get('success'))
-    return render_template('data.html', form=form)
+    if request.method == 'POST':
+        if form.validate_on_submit():  # if new data source is added
+            file = form.file.data
+            if file and allowed_file(file.filename):
+                file.save(os.path.join(base_dir, app.config['UPLOAD_FOLDER'],
+                                       secure_filename(file.filename)))
+                data = Data(
+                    datatype=file.filename.rsplit('.', 1)[1].lower(),
+                    filepath='/static/uploads/' +
+                    secure_filename(file.filename),
+                    user_id=session['_user_id']
+                )
+                db.session.add(data)
+                db.session.commit()
+                flash('File uploaded successfully',
+                      category=flashes.get('success'))
+                return redirect(url_for('data'))
+
+        elif 'delete-data' in request.form:  # if data row is deleted
+            file_id = request.form.get('file_id')
+            del_file = Data.query.get(file_id)
+            if del_file:
+                os.remove(del_file.filepath[1:])
+                db.session.delete(del_file)
+                db.session.commit()
+                flash('File deleted successfully', category=flashes.get('success'))
+                return redirect(url_for('data'))
+            else:
+                flash('Error: File not found', category=flashes.get('error'))
+
+    return render_template('data.html', form=form, files=files_list)
 
 
 @app.route('/personas')

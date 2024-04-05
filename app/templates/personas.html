@@ -3,5 +3,127 @@
 {% block title %}Your Personas{% endblock %}
 
 {% block content %}
-<h1 class="text-center justify-center text-white">Your created AI personas will show up here</h1>
+
+{% include 'announce.html' %}
+
+<div class="max-w-3xl text-center mx-auto py-6">
+  <h1 class="block font-medium text-gray-800 dark:text-gray-200 text-xl sm:text-2xl md:text-3xl lg:text-4xl">
+    Your Uploaded <span
+      class="bg-clip-text bg-gradient-to-t from-violet-800 to-blue-400 dark:from-blue-300 dark:to-violet-800 text-transparent">
+      Personas</span>
+  </h1>
+</div>
+
+
+<div class="flex justify-end items-center">
+  <button type="button"
+    class="m-4 p-2 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+    data-hs-overlay="#hs-static-backdrop-modal">
+    <svg fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink" width="16px" height="16px" viewBox="0 0 45.402 45.402"
+      xml:space="preserve">
+      <g>
+        <path d="M41.267,18.557H26.832V4.134C26.832,1.851,24.99,0,22.707,0c-2.283,0-4.124,1.851-4.124,4.135v14.432H4.141
+  		c-2.283,0-4.139,1.851-4.138,4.135c-0.001,1.141,0.46,2.187,1.207,2.934c0.748,0.749,1.78,1.222,2.92,1.222h14.453V41.27
+  		c0,1.142,0.453,2.176,1.201,2.922c0.748,0.748,1.777,1.211,2.919,1.211c2.282,0,4.129-1.851,4.129-4.133V26.857h14.435
+  		c2.283,0,4.134-1.867,4.133-4.15C45.399,20.425,43.548,18.557,41.267,18.557z" />
+      </g>
+    </svg>
+    Create Persona
+  </button>
+</div>
+
+<div id="hs-static-backdrop-modal"
+  class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none [--overlay-backdrop:static]"
+  data-hs-overlay-keyboard="false">
+  <div
+    class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto min-h-[calc(100%-3.5rem)] flex items-center">
+    <div
+      class="w-full flex flex-col bg-white border shadow-sm rounded-xl pointer-events-auto dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7]">
+      <!-- Form Start -->
+      <form method="post" class="text-slate-900 dark:text-white">
+        <div class="flex justify-between items-center py-3 px-4 border-b dark:border-gray-700">
+          <h3 class="font-bold text-gray-800 dark:text-white">
+            Persona Creation
+          </h3>
+          <button type="button"
+            class="hs-dropup-toggle flex justify-center items-center size-7 text-sm font-semibold rounded-full border border-transparent text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-gray-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+            data-hs-overlay="#hs-static-backdrop-modal">
+            <span class="sr-only">Close</span>
+            <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="p-4 overflow-y-auto">
+          <!-- <p class="mt-1 text-gray-800 dark:text-gray-400">
+          This is a wider card with supporting text below as a natural lead-in to additional content.
+        </p> -->
+          <label for="name" class="block text-sm font-medium mb-2 dark:text-white">Name your Persona</label>
+          <input type="text" id="name" name="name"
+            class="py-2 px-3 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+            placeholder="Enter name">
+          <br>
+          <label for="textarea-label" class="block text-sm font-medium mb-2 dark:text-white">Prompt</label>
+          <textarea id="textarea-label" name="prompt"
+            class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+            rows="3" placeholder="Describe in detail what you want your persona to do."></textarea>
+          <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t dark:border-gray-700">
+            <input type="submit" name="add-persona" id="submit" value="Add"
+              class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 cursor-pointer disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
+          </div>
+        </div>
+      </form>
+      <!-- Form End -->
+    </div>
+  </div>
+</div>
+
+<hr class="border-gray-400 dark:border-gray-800">
+
+<div class="flex flex-col px-4">
+  <div class="-m-1.5 overflow-x-auto">
+    <div class="p-1.5 min-w-full inline-block align-middle">
+      <div class="overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead>
+            <tr>
+              <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Name</th>
+              <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Prompt</th>
+              <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Added On</th>
+              <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+            {% for persona in personas %}
+            <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                {{ persona.name }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                {{ persona.prompt }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                {{ persona.added_on }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+                <form method="post" action="{{ url_for('personas') }}">
+                  <input type="hidden" name="persona_id" value="{{ persona._id }}" readonly>
+                  <button type="submit" name="delete-persona"
+                    onclick="return confirm('Are you sure you want to delete this persona?')"
+                    class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 disabled:opacity-50 disabled:pointer-events-none dark:text-red-500 dark:hover:text-red-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">Delete</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

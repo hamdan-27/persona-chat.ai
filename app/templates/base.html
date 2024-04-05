@@ -21,7 +21,12 @@
 	</style>
 </head>
 
-<body class="dark:bg-slate-900 bg-slate-300 h-full items-center py-16">
+<body class="dark:bg-slate-900 bg-slate-300 h-full items-center py-16 
+	[&::-webkit-scrollbar]:w-2
+  [&::-webkit-scrollbar-track]:bg-gray-100
+  [&::-webkit-scrollbar-thumb]:bg-gray-400
+  dark:[&::-webkit-scrollbar-track]:bg-slate-700
+  dark:[&::-webkit-scrollbar-thumb]:bg-slate-500">
 
 	<!-- Navbar -->
 	<nav class="navbar bg-slate-200 dark:bg-gray-800">
@@ -85,6 +90,8 @@
 							</button>
 						</div>
 						{% if current_user.is_authenticated %}
+						<p class="p-2 text-gray-950 dark:text-white">Welcome 
+							<span class="font-medium text-blue-500">{{ current_user.name }}!</span></p>
 						<a href="{{ url_for('logout') }}"
 							class="bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-white px-3 py-2 rounded-md text-sm font-medium">
 							Logout</a>

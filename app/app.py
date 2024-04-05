@@ -56,7 +56,7 @@ def login():
             session['email'] = user.email
             return redirect(url_for('profile'))
         else:
-            flash('Invalid email or password', category=flashes.get('error'))
+            flash('Invalid email or password', 'error')
             print("Invalid email or password")
 
     return render_template('login.html')
@@ -72,7 +72,7 @@ def register():
 
         exist_user = User.query.filter_by(email=email).first()
         if exist_user:
-            flash('User already exists!', category=flashes.get('warning'))
+            flash('User already exists!', 'warning')
             print('User already exists!')
             return redirect(url_for('register'))
 
@@ -80,7 +80,7 @@ def register():
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
-        flash('User registered successfully', category=flashes.get('success'))
+        flash('User registered successfully', 'success')
         print('User registered successfully')
         return redirect(url_for('login'))
 
@@ -114,9 +114,10 @@ def profile():
             elif 'delete-profile' in request.form:
                 db.session.delete(user)
                 db.session.commit()
+                logout_user()
                 return redirect(url_for('index'))
         else:
-            flash("Error: User not found", category=flashes.get('error'))
+            flash("Error: User not found", 'error')
 
     return render_template('profile.html',
                            flashes=flashes,
@@ -146,8 +147,10 @@ def data():
                 db.session.add(data)
                 db.session.commit()
                 flash('File uploaded successfully',
-                      category=flashes.get('success'))
+                      'success')
                 return redirect(url_for('data'))
+            else:
+                flash('Error: Invalid file type', 'error')
 
         elif 'delete-data' in request.form:  # if data row is deleted
             file_id = request.form.get('file_id')
@@ -156,18 +159,43 @@ def data():
                 os.remove(del_file.filepath[1:])
                 db.session.delete(del_file)
                 db.session.commit()
-                flash('File deleted successfully', category=flashes.get('success'))
+                flash('File deleted successfully', 'success')
                 return redirect(url_for('data'))
             else:
-                flash('Error: File not found', category=flashes.get('error'))
+                flash('Error: File not found', 'error')
 
     return render_template('data.html', form=form, files=files_list)
 
 
-@app.route('/personas')
+@app.route('/personas', methods=['GET', 'POST'])
 @login_required
 def personas():
-    return render_template('personas.html')
+    persona_list = Persona.query.filter_by(user_id=session['_user_id']).all()
+
+    if request.method == 'POST':
+        if 'add-persona' in request.form:  # if new data source is added
+            name = request.form.get('name')
+            prompt = request.form.get('prompt')
+
+            persona = Persona(name=name, prompt=prompt, user_id=session['_user_id'])
+            db.session.add(persona)
+            db.session.commit()
+
+            flash('Persona created successfully', 'success')
+            return redirect(url_for('personas'))
+        
+        elif 'delete-persona' in request.form:  # if data row is deleted
+            persona_id = request.form.get('persona_id')
+            del_persona = Persona.query.get(persona_id)
+            if del_persona:
+                db.session.delete(del_persona)
+                db.session.commit()
+                flash('Persona deleted successfully', 'success')
+                return redirect(url_for('personas'))
+            else:
+                flash('Error: Persona not found', 'error')
+
+    return render_template('personas.html', personas=persona_list)
 
 
 @app.route('/chats')

@@ -29,6 +29,7 @@ class Persona(db.Model):
     name = db.Column(db.String(100))
     prompt = db.Column(db.String(1000))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    added_on = db.Column(db.DateTime, nullable=False, default=db.func.now())
 
     def __repr__(self):
         return "<Persona %r>" % self.name

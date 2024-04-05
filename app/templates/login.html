@@ -12,7 +12,7 @@
 
 {% else %}
 <main class="w-full max-w-md mx-auto p-6">
-	<div class="mt-7 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700">
+	<div class="mt-2 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700">
 		<div class="p-4 sm:p-7">
 			<div class="text-center">
 				<h1 class="block text-2xl font-bold text-gray-800 dark:text-white">Sign in</h1>
@@ -28,8 +28,47 @@
 				<!-- Form -->
 				<form method="post">
 					<div class="grid gap-y-4">
+						<div class="relative">
+							<input type="email" name="email" id="hs-floating-gray-input-email" 
+							class="peer p-4 block w-full bg-gray-100 border-transparent rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-gray-700 dark:border-transparent dark:text-gray-400 dark:focus:ring-gray-600
+						  focus:pt-6
+						  focus:pb-2
+						  [&:not(:placeholder-shown)]:pt-6
+						  [&:not(:placeholder-shown)]:pb-2
+						  autofill:pt-6
+						  autofill:pb-2" placeholder="you@example.com">
+							<label for="hs-floating-gray-input-email" class="absolute top-0 start-0 p-4 h-full text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent dark:text-white peer-disabled:opacity-50 peer-disabled:pointer-events-none
+						    peer-focus:text-xs
+						    peer-focus:-translate-y-1.5
+						    peer-focus:text-gray-500
+						    peer-[:not(:placeholder-shown)]:text-xs
+						    peer-[:not(:placeholder-shown)]:-translate-y-1.5
+						    peer-[:not(:placeholder-shown)]:text-gray-500">Email</label>
+						</div>
+						<!-- End Floating Input -->
+						
+						<!-- Floating Input -->
+						<div class="relative">
+							<input type="password" name="password" id="hs-floating-gray-input-password" 
+							class="peer p-4 block w-full bg-gray-100 border-transparent rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-gray-700 dark:border-transparent dark:text-gray-400 dark:focus:ring-gray-600
+						  focus:pt-6
+						  focus:pb-2
+						  [&:not(:placeholder-shown)]:pt-6
+						  [&:not(:placeholder-shown)]:pb-2
+						  autofill:pt-6
+						  autofill:pb-2" placeholder="********">
+							<label for="hs-floating-gray-input-passowrd" class="absolute top-0 start-0 p-4 h-full text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent dark:text-white peer-disabled:opacity-50 peer-disabled:pointer-events-none
+						    peer-focus:text-xs
+						    peer-focus:-translate-y-1.5
+						    peer-focus:text-gray-500
+						    peer-[:not(:placeholder-shown)]:text-xs
+						    peer-[:not(:placeholder-shown)]:-translate-y-1.5
+						    peer-[:not(:placeholder-shown)]:text-gray-500">Password</label>
+						</div>
+						<!-- End Floating Input -->
+
 						<!-- Form Group -->
-						<div>
+						<!-- <div>
 							<label for="email" class="block text-sm mb-2 dark:text-white">Email</label>
 							<div class="relative">
 								<input type="text" id="email" name="email"
@@ -45,15 +84,13 @@
 							</div>
 							<p class="hidden text-xs text-red-600 mt-2" id="email-error">Please include a valid
 								email address so we can get back to you</p>
-						</div>
+						</div> -->
 						<!-- End Form Group -->
 
 						<!-- Form Group -->
-						<div>
+						<!-- <div>
 							<div class="flex justify-between items-center">
 								<label for="password" class="block text-sm mb-2 dark:text-white">Password</label>
-								<!-- <a class="text-sm text-blue-600 decoration-2 hover:underline font-medium dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-                                    href="../examples/html/recover-account.html">Forgot password?</a> -->
 							</div>
 							<div class="relative">
 								<input type="password" id="password" name="password"
@@ -69,7 +106,7 @@
 							</div>
 							<p class="hidden text-xs text-red-600 mt-2" id="password-error">8+ characters required
 							</p>
-						</div>
+						</div> -->
 
 
 						<!-- <div class="max-w-sm">

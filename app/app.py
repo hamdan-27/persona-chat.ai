@@ -1,7 +1,7 @@
 from flask import request, session, render_template, send_from_directory, redirect, url_for, flash
-from flask_login import LoginManager, login_user, login_required, logout_user
-from models import User, Persona, Data, Message
-from config import base_dir, app, db, flashes
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from models import User, Persona, Data, Conversation, Message
+from config import base_dir, app, db, flashes, client
 from wtforms import FileField, SubmitField
 from werkzeug.utils import secure_filename
 from flask_wtf import FlaskForm
@@ -17,7 +17,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'csv', 'xslx', 'tsv'}
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'csv', 'tsv', 'xlsx'}
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -32,9 +32,14 @@ def load_user(user_id):
 @app.route('/test', methods=['GET', 'POST'])
 def test():
     # Test code here
-    form = UploadFileForm()
-    return render_template('test.html', form=form)
-    # return render_template('admin.html')
+    personas = Persona.query.filter_by(user_id=session['_user_id']).all()
+    conversations = Conversation.query.filter_by(user_id=session['_user_id']).all()
+    if conversations:
+        print("conversations:", conversations[0].title)
+    else:
+        print("No conversations")
+    # return render_template('test.html', conversation=conversation)
+    return render_template('chats.html', conversations=conversations, personas=personas)
 
 
 @app.route('/')
@@ -94,7 +99,7 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/profile')
+@app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
     if request.method == 'POST':
@@ -103,13 +108,22 @@ def profile():
             if 'update-profile' in request.form:
                 new_name = request.form.get('fullname')
                 new_email = request.form.get('email')
-                new_pass = request.form.get('password')
+                old_pass = request.form.get('old-password')
+                new_pass = request.form.get('new-password')
 
                 user.name = new_name
                 user.email = new_email
-                user.set_password(new_pass)
+                
+                session['name'] = new_name
+                session['email'] = new_email
 
+                if user.check_password(old_pass) and new_pass:
+                    user.set_password(new_pass)
+                    return redirect(url_for('logout'))
+                
                 db.session.commit()
+                flash('Profile updated successfully', 'success')
+                return redirect(url_for('profile'))
 
             elif 'delete-profile' in request.form:
                 db.session.delete(user)
@@ -198,10 +212,59 @@ def personas():
     return render_template('personas.html', personas=persona_list)
 
 
-@app.route('/chats')
+@app.route('/chats', methods=['GET', 'POST'])
+@login_required
 def chats():
-    return render_template('chats.html')
+    # personas = Persona.query.filter_by(user_id=session['_user_id']).all()
+    # conversations = Conversation.query.filter_by(user_id=session['_user_id']).all()
+    personas = current_user.personas.all()
+    conversations = current_user.conversations.all()
 
+    if request.method == 'POST':
+        persona_id = request.form['persona']
+        title = request.form['title']
+        new_convo = Conversation(persona_id=persona_id, title=title, user_id=session['_user_id'])
+        db.session.add(new_convo)
+        db.session.commit()
+        return redirect(url_for('chat', conv_id=new_convo._id))
+
+    return render_template('chat_base.html', personas=personas, conversations=conversations)
+
+
+@app.route('/chats/<int:conv_id>', methods=['GET', 'POST'])
+@login_required
+def chat(conv_id):
+    personas = current_user.personas.all()
+    conversations = current_user.conversations.all()
+    conversation = Conversation.query.get_or_404(conv_id)
+    persona_in_use = Persona.query.get(conversation.persona_id)
+    data=None
+    if persona_in_use.data_id:
+        data = Data.query.get(Persona.query.get(conversation.persona_id).data_id)
+
+    if request.method == 'POST':
+        content = request.form.get('message')
+        message = Message(is_user=True, content=content, user_id=session['_user_id'], conversation_id=conv_id)
+        db.session.add(message)
+
+        # Generate response
+        # resp = f"Sample response to {content}"
+        resp = client.chat.completions.create(
+            model='gpt-3.5-turbo',
+            messages=[
+                {"role": "system", "content": persona_in_use.prompt},
+                {"role": "user", "content": content}
+            ],
+        )
+        bot_msg = Message(is_user=False, content=resp.choices[0].message.content, 
+                          user_id=session['_user_id'], conversation_id=conv_id)
+        db.session.add(bot_msg)
+        db.session.commit()
+
+    messages = conversation.messages.order_by(Message.timestamp.asc()).all()
+    return render_template('chats.html', personas=personas, persona_in_use=persona_in_use, data=data, 
+                           conversations=conversations, conversation=conversation, 
+                           messages=messages)
 
 @app.route("/preline.js")
 @login_required

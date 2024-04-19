@@ -1,9 +1,14 @@
-from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+from openai import OpenAI
 from flask_cors import CORS
+from flask import Flask
 import os
 
+load_dotenv()
 base_dir = os.path.abspath(os.path.dirname(__file__))
+
+client = OpenAI()
 
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root@localhost:3306/ai_chats'
@@ -16,7 +21,6 @@ CORS(app)
 
 app.app_context().push()
 db = SQLAlchemy(app)
-
 
 flashes = {
     "info": "blue",

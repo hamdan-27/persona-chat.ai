@@ -12,6 +12,7 @@ class User(UserMixin, db.Model):
     
     personas = db.relationship('Persona', backref='user', lazy='dynamic')
     data = db.relationship('Data', backref='user', lazy='dynamic')
+    conversations = db.relationship('Conversation', backref='user', lazy='dynamic')
     messages = db.relationship('Message', backref='user', lazy='dynamic')
 
     def __repr__(self):
@@ -29,6 +30,7 @@ class Persona(db.Model):
     name = db.Column(db.String(100))
     prompt = db.Column(db.String(1000))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    data_id = db.Column(db.Integer, db.ForeignKey('data.id'))
     added_on = db.Column(db.DateTime, nullable=False, default=db.func.now())
 
     def __repr__(self):
@@ -42,8 +44,22 @@ class Data(db.Model):
     added_on = db.Column(db.DateTime, nullable=False, default=db.func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
+    personas = db.relationship('Persona', backref='data', lazy='dynamic')
+
     def __repr__(self):
         return "<Data %r>" % self.filepath
+
+
+class Conversation(db.Model):
+    _id = db.Column("id", db.Integer, primary_key=True)
+    title = db.Column(db.String(100))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    persona_id = db.Column(db.Integer, db.ForeignKey('persona.id'), nullable=False)
+    
+    messages = db.relationship('Message', backref='conversation', lazy='dynamic')
+
+    def __repr__(self):
+        return "<Conversation %r>" % self._id
 
 
 class Message(db.Model):
@@ -52,6 +68,7 @@ class Message(db.Model):
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=db.func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'), nullable=False)
 
     def __repr__(self):
         return "<Message %r>" % self._id

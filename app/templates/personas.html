@@ -82,6 +82,8 @@
   </div>
 </div>
 
+{% if personas %}
+
 <hr class="border-gray-400 dark:border-gray-800">
 
 <div class="flex flex-col px-4">
@@ -125,5 +127,12 @@
     </div>
   </div>
 </div>
+{% else %}
+
+<p class="mt-4 text-xl text-center text-gray-600 dark:text-gray-400">
+  No personas found! Start by creating your first persona.
+</p>
+
+{% endif %}
 
 {% endblock %}

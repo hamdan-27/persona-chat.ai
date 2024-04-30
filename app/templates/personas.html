@@ -8,7 +8,7 @@
 
 <div class="max-w-3xl text-center mx-auto py-6">
   <h1 class="block font-medium text-gray-800 dark:text-gray-200 text-xl sm:text-2xl md:text-3xl lg:text-4xl">
-    Your Uploaded <span
+    Your Created <span
       class="bg-clip-text bg-gradient-to-t from-violet-800 to-blue-400 dark:from-blue-300 dark:to-violet-800 text-transparent">
       Personas</span>
   </h1>
@@ -64,12 +64,20 @@
         </p> -->
           <label for="name" class="block text-sm font-medium mb-2 dark:text-white">Name your Persona</label>
           <input type="text" id="name" name="name"
-            class="py-2 px-3 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+            class="py-2 px-3 block w-full bg-gray-100 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
             placeholder="Enter name">
+          <br>
+            <label for="data" class="block text-sm font-medium mb-2 dark:text-white">Train on Knowledge Base</label>
+          <select name="data" class="py-2 px-3 pe-9 block w-full bg-gray-100 border-transparent rounded-lg text-sm text-gray-400 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-transparent dark:text-neutral-400 dark:focus:ring-neutral-600">
+            <option selected>Choose a Knowledge Base</option>
+            {% for data in data_list %}
+            <option value="{{ data._id }}">{{ data.filepath }}</option>
+            {% endfor %}
+          </select>
           <br>
           <label for="textarea-label" class="block text-sm font-medium mb-2 dark:text-white">Prompt</label>
           <textarea id="textarea-label" name="prompt"
-            class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+            class="py-2 px-3 block w-full bg-gray-100 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
             rows="3" placeholder="Describe in detail what you want your persona to do."></textarea>
           <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t dark:border-gray-700">
             <input type="submit" name="add-persona" id="submit" value="Add"
@@ -105,7 +113,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
                 {{ persona.name }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+              <td class="px-6 py-4 max-w-lg truncate whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                 {{ persona.prompt }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">

@@ -1,4 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
+from wtforms import FileField, SubmitField
+from flask_wtf import FlaskForm
 from dotenv import load_dotenv
 from openai import OpenAI
 from flask_cors import CORS
@@ -21,6 +23,12 @@ CORS(app)
 
 app.app_context().push()
 db = SQLAlchemy(app)
+
+
+class UploadFileForm(FlaskForm):
+    file = FileField("File")
+    submit = SubmitField("Upload File")
+
 
 flashes = {
     "info": "blue",

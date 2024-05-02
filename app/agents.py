@@ -1,19 +1,18 @@
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, MessagesPlaceholder, PromptTemplate
-from langchain_experimental.agents.agent_toolkits.pandas.base import create_pandas_dataframe_agent
 from langchain_community.document_loaders import TextLoader, PyMuPDFLoader
-from langchain_experimental.agents.agent_toolkits import create_csv_agent
+from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_experimental.tools.python.tool import PythonAstREPLTool
 from langchain.agents import AgentExecutor, create_openai_tools_agent
 from langchain.tools.retriever import create_retriever_tool
 from langchain_text_splitters import CharacterTextSplitter
 from langchain.agents.mrkl.base import ZeroShotAgent
 from langchain_community.vectorstores import FAISS
+from langchain.memory import ChatMessageHistory
 from langchain_openai import OpenAIEmbeddings
 from langchain.chains.llm import LLMChain
 from langchain_openai import ChatOpenAI
-from config import app, db
+from config import app
 import pandas as pd
-import models
 
 PREFIX = """
 {user_prompt}. You are working with a pandas dataframe in Python. The name of the dataframe is `df`. You can answer general messages liek greetings.
@@ -30,12 +29,15 @@ Observation: the result of the action
 Thought: I now know the final answer
 Final Answer: the final answer to the original input question"""
 
-def create_rag_agent(user_prompt, datatype, filepath, llm=ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0.1)):
+
+def create_rag_agent(user_prompt, datatype, filepath,
+                     llm=ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0.1)):
+
     if datatype == "pdf":
         loader = PyMuPDFLoader(app.config["UPLOAD_FOLDER"] + filepath)
     elif datatype == "txt":
         loader = TextLoader(app.config["UPLOAD_FOLDER"] + filepath)
-    
+
     documents = loader.load()
 
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
@@ -65,7 +67,7 @@ def create_rag_agent(user_prompt, datatype, filepath, llm=ChatOpenAI(model="gpt-
     return AgentExecutor(agent=agent, tools=tools)
 
 
-def create_pandas_agent(user_prompt, datatype, filepath, 
+def create_pandas_agent(user_prompt, datatype, filepath,
                         llm=ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0.1)):
     if datatype == "csv":
         df = pd.read_csv(app.config["UPLOAD_FOLDER"] + filepath)
@@ -100,11 +102,27 @@ def create_pandas_agent(user_prompt, datatype, filepath,
         handle_parsing_errors=True,
     )
 
-    # return create_pandas_dataframe_agent(
-    #     llm=llm,
-    #     df=df,
-    #     prefix=user_prompt,
-    #     verbose=True,
-    #     handle_parsing_errors=True,
-    # )
 
+def create_base_agent(
+    user_prompt,
+    llm=ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0.1)
+):
+
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system",
+            f"You are a helpful assistant. Answer all questions to the best of your ability. {user_prompt}"),
+            MessagesPlaceholder(variable_name="chat_history"),
+            ("human", "{input}"),
+        ]
+    )
+
+    chain = prompt | llm
+    chat_history_for_chain = ChatMessageHistory()
+
+    return RunnableWithMessageHistory(
+        chain,
+        lambda session_id: chat_history_for_chain,
+        input_messages_key="input",
+        history_messages_key="chat_history",
+    )

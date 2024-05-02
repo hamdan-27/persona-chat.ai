@@ -1,0 +1,434 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Users{% endblock %}
+
+{% block content %}
+<!-- Card -->
+<div class="flex flex-col">
+  <div class="-m-1.5 overflow-x-auto">
+    <div class="p-1.5 min-w-full inline-block align-middle">
+      <div
+        class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-slate-800 dark:border-slate-700">
+        <!-- Header -->
+        <div
+          class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-slate-700">
+          <div>
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-slate-200">
+              Users
+            </h2>
+            <p class="text-sm text-gray-600 dark:text-slate-400">
+              Add users, edit and more.
+            </p>
+          </div>
+
+          <div>
+            <div class="inline-flex gap-x-2">
+              <button type="button"
+                class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                data-hs-overlay="#hs-static-backdrop-modal">
+                <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M5 12h14" />
+                  <path d="M12 5v14" />
+                </svg>
+                Add user
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- End Header -->
+
+        <!-- Add User Modal -->
+        <div id="hs-static-backdrop-modal"
+          class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none [--overlay-backdrop:static]"
+          data-hs-overlay-keyboard="false">
+          <div
+            class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto min-h-[calc(100%-3.5rem)] flex items-center">
+            <div
+              class="w-full flex flex-col bg-white border shadow-sm rounded-xl pointer-events-auto dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7]">
+              <!-- Form Start -->
+              <form method="post" action="{{ url_for('register') }}" class="text-slate-900 dark:text-white">
+                <div class="flex justify-between items-center py-3 px-4 border-b dark:border-gray-700">
+                  <h3 class="font-bold text-gray-800 dark:text-white">
+                    Add User
+                  </h3>
+                  <button type="button"
+                    class="hs-dropup-toggle flex justify-center items-center size-7 text-sm font-semibold rounded-full border border-transparent text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-gray-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                    data-hs-overlay="#hs-static-backdrop-modal">
+                    <span class="sr-only">Close</span>
+                    <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <path d="M18 6 6 18" />
+                      <path d="m6 6 12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="p-4 overflow-y-auto">
+                  <!-- <p class="mt-1 text-gray-800 dark:text-gray-400">
+                    This is a wider card with supporting text below as a natural lead-in to additional content.
+                  </p> -->
+                  <div class="sm:col-span-3">
+                    <label for="af-account-full-name"
+                      class="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
+                      Full name
+                    </label>
+                    <!-- <div class="hs-tooltip inline-block">
+                  					<button type="button" class="hs-tooltip-toggle ms-1">
+                  						<svg class="inline-block size-3 text-gray-400 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg"
+                  							width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  							<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                  							<path
+                  								d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                  						</svg>
+                  					</button>
+                  					<span
+                  						class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible w-40 text-center z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded shadow-sm dark:bg-slate-700"
+                  						role="tooltip">
+                  						Displayed on public forums, such as Preline
+                  					</span>
+                  				</div> -->
+                  </div>
+                  <!-- End Col -->
+
+                  <div class="sm:col-span-9">
+                    <div class="sm:flex">
+                      <input id="af-account-full-name" type="text" name="name"
+                        class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm -mt-px -ms-px rounded-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none bg-slate-100 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                        placeholder="John Doe">
+
+                    </div>
+                  </div>
+                  <!-- End Col -->
+
+                  <div class="sm:col-span-3">
+                    <label for="af-account-username"
+                      class="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
+                      Username
+                    </label>
+                  </div>
+                  <!-- End Col -->
+
+                  <div class="sm:col-span-9">
+                    <input id="af-account-username" type="text" name="username"
+                      class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none bg-slate-100 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                      placeholder="john.doe21">
+                  </div>
+                  <!-- End Col -->
+
+
+                  <div class="sm:col-span-3">
+                    <label for="af-account-email" class="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
+                      Email
+                    </label>
+                  </div>
+                  <!-- End Col -->
+
+                  <div class="sm:col-span-9">
+                    <input id="af-account-email" type="email" name="email"
+                      class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none bg-slate-100 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                      placeholder="john@doe.com">
+                  </div>
+                  <!-- End Col -->
+                  <div class="sm:col-span-3">
+                    <label for="af-account-password"
+                      class="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
+                      Password
+                    </label>
+                  </div>
+                  <!-- End Col -->
+
+                  <div class="sm:col-span-9">
+                    <div class="space-y-2">
+                      <input id="af-account-password" type="password" name="password"
+                        class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none bg-slate-100 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                        placeholder="Enter password">
+                    </div>
+                  </div>
+                  <!-- End Col -->
+                </div>
+                <!-- End Grid -->
+                <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t dark:border-gray-700">
+                  <input type="submit" name="add-user" id="submit" value="Add"
+                    class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 cursor-pointer disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
+                </div>
+            </div>
+            </form>
+            <!-- Form End -->
+          </div>
+        </div>
+        <!-- End Add User Modal -->
+
+
+        <!-- Table -->
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+          <thead class="bg-gray-50 dark:bg-slate-800">
+            <tr>
+              <th scope="col" class="ps-6 py-3 text-start"></th>
+
+              <th scope="col" class="px-6 py-3 text-start">
+                <div class="flex items-center gap-x-2">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-slate-200">
+                    ID
+                  </span>
+                </div>
+              </th>
+
+              <th scope="col" class="ps-6 lg:ps-3 xl:ps-0 pe-6 py-3 text-start">
+                <div class="flex items-center gap-x-2">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-slate-200">
+                    Name
+                  </span>
+                </div>
+              </th>
+
+              <th scope="col" class="px-6 py-3 text-start">
+                <div class="flex items-center gap-x-2">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-slate-200">
+                    Username
+                  </span>
+                </div>
+              </th>
+
+              <th scope="col" class="px-6 py-3 text-start">
+                <div class="flex items-center gap-x-2">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-slate-200">
+                    Email
+                  </span>
+                </div>
+              </th>
+
+              <th scope="col" class="px-6 py-3 text-start">
+                <div class="flex items-center gap-x-2">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-slate-200">
+                    Encrypted Password
+                  </span>
+                </div>
+              </th>
+
+              <th scope="col" class="px-6 py-3 text-end"></th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
+            {% for user in users %}
+            <tr>
+              <td class="size-px whitespace-nowrap">
+                <div class="ps-6 py-3"></div>
+              </td>
+
+              <td class="size-px whitespace-nowrap">
+                <div class="ps-6 lg:ps-3 xl:ps-0 pe-6 py-3">
+                  <div class="flex items-center gap-x-3">
+                    <div class="grow block text-sm font-semibold text-gray-800 dark:text-slate-200">
+                      {{ user.id }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <td class="size-px whitespace-nowrap">
+                <div class="py-3">
+                  <span class="block text-sm font-semibold text-gray-800 dark:text-slate-200">
+                  {{ user.name }}</span>
+                </div>
+              </td>
+              <td class="size-px whitespace-nowrap">
+                <div class="py-3">
+                  <span class="block text-sm text-gray-700 dark:text-slate-300">
+                    {{ user.username }}</span>
+                </div>
+              </td>
+              <td class="size-px whitespace-nowrap">
+                <div class="py-3">
+                  <span class="block text-sm text-gray-800 dark:text-slate-200">
+                    {{ user.email }}</span>
+                </div>
+              </td>
+              <td class="size-px whitespace-nowrap">
+                <div class="py-3 block max-w-24 text-sm text-gray-700 dark:text-slate-300 truncate">
+                  {{ user.password }}
+                </div>
+              </td>
+              <td class="size-px whitespace-nowrap">
+                <div class="px-6 py-1.5">
+                  <button 
+                  class="inline-flex items-center gap-x-1 text-sm text-blue-600 decoration-2 hover:underline font-medium dark:text-blue-500"
+                  data-hs-overlay="#hs-static-backdrop-modal-edit">
+                    Edit
+                </button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+
+
+          </tbody>
+        </table>
+        <!-- End Table -->
+
+        <!-- Edit Modal -->
+        <div id="hs-static-backdrop-modal-edit"
+          class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none [--overlay-backdrop:static]"
+          data-hs-overlay-keyboard="false">
+          <div
+            class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto min-h-[calc(100%-3.5rem)] flex items-center">
+            <div
+              class="w-full flex flex-col bg-white border shadow-sm rounded-xl pointer-events-auto dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7]">
+              
+              <!-- Update Form Start -->
+              <form method="post" class="text-slate-900 dark:text-white">
+                <div class="flex justify-between items-center py-3 px-4 border-b dark:border-gray-700">
+                  <h3 class="font-bold text-gray-800 dark:text-white">
+                    Edit User
+                  </h3>
+                  <button type="button"
+                    class="hs-dropup-toggle flex justify-center items-center size-7 text-sm font-semibold rounded-full border border-transparent text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-gray-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                    data-hs-overlay="#hs-static-backdrop-modal-edit">
+                    <span class="sr-only">Close</span>
+                    <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <path d="M18 6 6 18" />
+                      <path d="m6 6 12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="p-4 overflow-y-auto">
+                  <!-- <p class="mt-1 text-gray-800 dark:text-gray-400">
+                            This is a wider card with supporting text below as a natural lead-in to additional content.
+                          </p> -->
+                  <input type="hidden" id="id" name="id">
+                  <div class="sm:col-span-3">
+                    <label for="update-full-name" class="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
+                      Full name
+                    </label>
+                  </div>
+                  <!-- End Col -->
+                  <div class="sm:col-span-9">
+                    <div class="sm:flex">
+                      <input id="update-full-name" type="text" name="name"
+                        class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm -mt-px -ms-px rounded-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none bg-slate-100 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                        placeholder="John Doe">
+                    </div>
+                  </div>
+                  <!-- End Col -->
+
+                  <div class="sm:col-span-3">
+                    <label for="update-username" class="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
+                      Username
+                    </label>
+                  </div>
+                  <!-- End Col -->
+                  <div class="sm:col-span-9">
+                    <input id="update-username" type="text" name="username"
+                      class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none bg-slate-100 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                      placeholder="john.doe21">
+                  </div>
+                  <!-- End Col -->
+        
+                  <div class="sm:col-span-3">
+                    <label for="update-email" class="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
+                      Email
+                    </label>
+                  </div>
+                  <!-- End Col -->
+                  <div class="sm:col-span-9">
+                    <input id="update-email" type="email" name="email"
+                      class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none bg-slate-100 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                      placeholder="john@doe.com">
+                  </div>
+                  <!-- End Col -->
+
+                  <div class="sm:col-span-3">
+                    <label for="update-password" class="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
+                      Password
+                    </label>
+                  </div>
+                  <!-- End Col -->
+                  <div class="sm:col-span-9">
+                    <div class="space-y-2">
+                      <input id="update-password" type="password" name="old-password"
+                        class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none bg-slate-100 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                        placeholder="Current password">
+                    </div>
+                  </div>
+                  <!-- End Col -->
+
+                  <div class="sm:col-span-3">
+                    <label for="update-password-new" class="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
+                      Password
+                    </label>
+                  </div>
+                  <!-- End Col -->
+                  <div class="sm:col-span-9">
+                    <div class="space-y-2">
+                      <input id="update-password-new" type="password" name="new-password"
+                        class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none bg-slate-100 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                        placeholder="New password">
+                    </div>
+                  </div>
+                  <!-- End Col -->
+                </div>
+                <!-- End Grid -->
+                <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t dark:border-gray-700">
+                  <input type="submit" name="update-user" id="update" value="Update"
+                    class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 cursor-pointer disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
+                  <button class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-red-600 text-white hover:bg-red-700 cursor-pointer disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                  type="submit" name="delete-user" id="delete">Delete</button>
+                </div>
+                
+            </div>
+            </form>
+            <!-- Update Form End -->
+          </div>
+        </div>
+        <!-- End Edit Modal -->
+
+        <!-- Footer -->
+        <div
+          class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200 dark:border-slate-700">
+          <div>
+            <p class="text-sm text-gray-600 dark:text-slate-400">
+              <span class="font-semibold text-gray-800 dark:text-slate-200">{{ count }}</span> users
+            </p>
+          </div>
+
+        </div>
+        <!-- End Footer -->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Card -->
+
+<script>
+  // Get the "Edit" buttons and the modal
+    const editButtons = document.querySelectorAll('[data-hs-overlay="#hs-static-backdrop-modal-edit"]');
+    const editModal = document.getElementById('hs-static-backdrop-modal-edit');
+
+    // Add click event listener to each "Edit" button
+    editButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Get the user data from the row
+        const row = button.closest('tr');
+        const userId = row.querySelector('td:nth-child(2)').textContent.trim();
+        const userName = row.querySelector('td:nth-child(3)').textContent.trim();
+        const userUsername = row.querySelector('td:nth-child(4)').textContent.trim();
+        const userEmail = row.querySelector('td:nth-child(5)').textContent.trim();
+        const userPassword = row.querySelector('td:nth-child(6)').textContent.trim();
+
+        // Populate the form fields with the user data
+        document.getElementById('id').value = userId;
+        document.getElementById('update-full-name').value = userName;
+        document.getElementById('update-username').value = userUsername;
+        document.getElementById('update-email').value = userEmail;
+        // document.getElementById('update-password').value = userPassword;
+
+        // Show the modal
+        // editModal.classList.remove('hidden');
+      });
+    });
+</script>
+{% endblock %}

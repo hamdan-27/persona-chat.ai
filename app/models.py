@@ -9,6 +9,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
+    is_admin = db.Column(db.Boolean, nullable=True, default=False)
     
     personas = db.relationship('Persona', backref='user', lazy='dynamic')
     data = db.relationship('Data', backref='user', lazy='dynamic')

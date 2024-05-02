@@ -1,23 +1,20 @@
-from flask import request, session, render_template, send_from_directory, redirect, url_for, flash
+from flask import request, session, render_template, send_from_directory, redirect, url_for, flash, abort
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from models import User, Persona, Data, Conversation, Message
-from agents import create_rag_agent, create_pandas_agent
-from config import base_dir, app, db, flashes
-from wtforms import FileField, SubmitField
+
 from werkzeug.utils import secure_filename
-from flask_wtf import FlaskForm
 from datetime import timedelta
 import os
+from agents import create_rag_agent, create_pandas_agent, create_base_agent
+from models import User, Persona, Data, Conversation, Message
+from config import UploadFileForm, base_dir, app, db, flashes
+from admin import admin
 
+app.register_blueprint(admin, url_prefix="/admin")
 app.permanent_session_lifetime = timedelta(hours=1)
 
 
-class UploadFileForm(FlaskForm):
-    file = FileField("File")
-    submit = SubmitField("Upload File")
 
-
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'csv', 'tsv', 'xlsx'}
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'csv', 'xlsx'}
 
 
 def allowed_file(filename):
@@ -37,15 +34,7 @@ def load_user(user_id):
 @app.route('/test', methods=['GET', 'POST'])
 def test():
     # Test code here
-    personas = Persona.query.filter_by(user_id=session['_user_id']).all()
-    conversations = Conversation.query.filter_by(
-        user_id=session['_user_id']).all()
-    if conversations:
-        print("conversations:", conversations[0].title)
-    else:
-        print("No conversations")
-    # return render_template('test.html', conversation=conversation)
-    return render_template('chats.html', conversations=conversations, personas=personas)
+    return render_template('admin.html')
 
 
 @app.route('/')
@@ -65,7 +54,10 @@ def login():
             login_user(user)
             session['name'] = user.name
             session['email'] = user.email
-            return redirect(url_for('profile'))
+            if user.is_admin:
+                return redirect(url_for('admin.dashboard'))
+            else:
+                return redirect(url_for('profile'))
         else:
             flash('Invalid email or password', 'error')
             print("Invalid email or password")
@@ -93,7 +85,10 @@ def register():
         db.session.commit()
         flash('User registered successfully', 'success')
         print('User registered successfully')
-        return redirect(url_for('login'))
+        if 'add-user' in request.form:
+            return redirect(url_for('admin.users'))
+        else:
+            return redirect(url_for('login'))
 
     return render_template('register.html')
 
@@ -103,12 +98,6 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('login'))
-
-
-@app.route('/admin')
-@login_required
-def admin():
-    return render_template('admin_base.html')
 
 
 @app.route('/profile', methods=['GET', 'POST'])
@@ -162,19 +151,24 @@ def data():
     if request.method == 'POST':
         if form.validate_on_submit():  # if new data source is added
             file = form.file.data
+            assigned_user = request.form.get('assign-user-id')
             if file and allowed_file(file.filename):
                 file.save(os.path.join(base_dir, app.config['UPLOAD_FOLDER'],
                                        secure_filename(file.filename)))
+                
                 data = Data(
                     datatype=file.filename.rsplit('.', 1)[1].lower(),
                     filepath=secure_filename(file.filename),
-                    user_id=session['_user_id']
+                    user_id=assigned_user if assigned_user else session['_user_id']
                 )
                 db.session.add(data)
                 db.session.commit()
                 flash('File uploaded successfully',
                       'success')
-                return redirect(url_for('data'))
+                if 'add-data' in request.form:
+                    return redirect(url_for('admin.data'))
+                else:
+                    return redirect(url_for('data'))
             else:
                 flash('Error: Invalid file type', 'error')
 
@@ -289,6 +283,8 @@ def chat(conv_id):
                     datatype=data.datatype,
                     filepath=data.filepath
                 )
+        else:
+            agent = create_base_agent(persona_in_use.prompt)
     else:
         flash(
             'Error: The persona associated with this conversation does not exist.', 'error')
@@ -302,17 +298,11 @@ def chat(conv_id):
         message = Message(is_user=True, content=content,
                           user_id=session['_user_id'], conversation_id=conv_id)
         db.session.add(message)
-        # db.session.commit()
-        # Generate response
-        # resp = f"Sample response to {content}"
-        # resp = client.chat.completions.create(
-        #     model='gpt-3.5-turbo',
-        #     messages=[
-        #         {"role": "system", "content": persona_in_use.prompt},
-        #         {"role": "user", "content": content}
-        #     ],
-        # )
-        resp = agent.invoke({"input": content})["output"]
+
+        resp = agent.invoke(
+            {"input": content}, 
+            {"configurable": {"session_id": "unused"}}
+        )["output"]
         bot_msg = Message(is_user=False, content=resp,
                           user_id=session['_user_id'], conversation_id=conv_id)
         db.session.add(bot_msg)
@@ -323,6 +313,15 @@ def chat(conv_id):
                            conversations=conversations, conversation=conversation,
                            messages=messages)
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('errors.html', code=404, message='Page not found'), 404
+
+
+@app.errorhandler(401)
+def page_not_found(e):
+    return render_template('errors.html', code=401, message='Unauthorised'), 401
+
 
 @app.route("/preline.js")
 @login_required
@@ -331,4 +330,5 @@ def serve_preline_js():
 
 
 if __name__ == '__main__':
+    print(app.config['SQLALCHEMY_DATABASE_URI'])
     app.run(debug=True)

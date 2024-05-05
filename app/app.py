@@ -120,11 +120,16 @@ def profile():
 
                 if user.check_password(old_pass) and new_pass:
                     user.set_password(new_pass)
+                    db.session.commit()
+                    flash('Profile updated successfully', 'success')
                     return redirect(url_for('logout'))
 
                 db.session.commit()
                 flash('Profile updated successfully', 'success')
-                return redirect(url_for('profile'))
+                if current_user.is_admin:
+                    return redirect(url_for('admin.account'))
+                else:
+                    return redirect(url_for('profile'))
 
             elif 'delete-profile' in request.form:
                 db.session.delete(user)
@@ -155,7 +160,6 @@ def data():
             if file and allowed_file(file.filename):
                 file.save(os.path.join(base_dir, app.config['UPLOAD_FOLDER'],
                                        secure_filename(file.filename)))
-                
                 data = Data(
                     datatype=file.filename.rsplit('.', 1)[1].lower(),
                     filepath=secure_filename(file.filename),
@@ -264,13 +268,12 @@ def chat(conv_id):
     conversations = current_user.conversations.all()
     conversation = Conversation.query.get(conv_id)
     persona_in_use = Persona.query.get(conversation.persona_id)
-    data = None
+    
     agent = None
 
     if persona_in_use is not None:
-        if persona_in_use.data_id:
-            data = Data.query.get(Persona.query.get(
-                conversation.persona_id).data_id)
+        if persona_in_use.data_id is not None:
+            data = Data.query.get(persona_in_use.data_id)
             if data.datatype in ["pdf", "txt"]:
                 agent = create_rag_agent(
                     user_prompt=persona_in_use.prompt,

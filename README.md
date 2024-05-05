@@ -14,10 +14,18 @@ This is a Flask web application that replicates some of the basic features of Ch
 
 ## Prerequisites
 
-Before running the application, make sure you have the required libraries installed. You can install the required packages using pip:
+Before running the application, make sure you have the required libraries amd packages installed. 
+
+You can install the required python packages using pip:
 
 ```bash
 pip install -r requirements.txt
+```
+
+Then, navigate to the `/app` folder and run:
+
+```bash
+npm install
 ```
 
 ## Quickstart

@@ -10,7 +10,7 @@ import os
 load_dotenv()
 base_dir = os.path.abspath(os.path.dirname(__file__))
 
-client = OpenAI()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root@localhost:3306/ai_chats'
